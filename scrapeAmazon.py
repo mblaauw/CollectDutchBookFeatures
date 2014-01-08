@@ -11,6 +11,11 @@ def get_bol_booklist( url ):
     html = urlopen(url).read()
     soup = BeautifulSoup(html, "lxml")
 
+    #
+    # NEXT ACTIONS: clean tags, build data set and iterate through all 800+ pages
+    #
+    # then output the dataset (and timestamp) 
+
     items = BeautifulSoup(str(soup.find_all("div", "product_content tst_searchresults_details_1")), 'lxml')
     title = items.find_all("a","product_name")
     pubdat = items.find_all(itemprop="datePublished")
