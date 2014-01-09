@@ -7,7 +7,6 @@ from urllib2 import urlopen
 BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+5260+7373+16638+14033/index.html'
 
 
-
 def get_bol_bookList(url):
     html = urlopen(url).read()
     soup = BeautifulSoup(html, 'lxml')
@@ -40,7 +39,7 @@ def get_bol_bookList(url):
     for eachItem in range(1, total_nr_of_items):
         print 'Scraping link number: ' + str(eachItem)
         newurl = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
-        html = urlopen(url).read()
+        html = urlopen(newurl).read()
         soup = BeautifulSoup(html, 'lxml')
 
         for i in range(1, 13):
@@ -66,4 +65,6 @@ def get_bol_bookList(url):
     # price = items.find_all(itemprop='price')
     '''
 test = get_bol_bookList(BASE_URL)
+test.to_csv('out2.csv')
+
 
