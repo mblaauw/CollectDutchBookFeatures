@@ -13,6 +13,10 @@ def get_bol_booklist( url ):
     html = urlopen(url).read()
     soup = BeautifulSoup(html, "lxml")
 
+
+    # todo: Logic works but need to iterate 12 time per page. now takes first result per page
+
+
     # collect and clean data
     item = BeautifulSoup(str(soup.find_all("div", "product_content tst_searchresults_details_1")), 'lxml')
     title = re.sub('<[^>]+>', '', str(item.find_all("a", "product_name")))
@@ -34,6 +38,8 @@ def get_bol_booklist( url ):
     total_nr_of_items = re.sub('<[^>]+>', '', str(soup.find("span", "tst_searchresults_nrFoundItems")))
     total_nr_of_items = float(total_nr_of_items.replace('.', ''))
     total_nr_of_items = int(round(total_nr_of_items / 12))
+
+
 
     # collect next url and append
     for eachItem in range(1, 5):
