@@ -7,6 +7,7 @@ import numpy as np
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 
+
 BASE_URL = "http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+5260+7373+16638+14033/index.html"
 
 def get_bol_booklist( url ):
