@@ -7,7 +7,7 @@ from urllib2 import urlopen
 BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+5260+7373+16638+14033/index.html'
 
 
-def get_bol_bookList(url):
+def get_bol_book_list(url):
     html = urlopen(url).read()
     soup = BeautifulSoup(html, 'lxml')
 
@@ -62,7 +62,7 @@ def get_bol_bookList(url):
     # time.sleep(1)
     return df
 
-test = get_bol_bookList(BASE_URL)
+test = get_bol_book_list(BASE_URL)
 test.to_csv('out2.csv')
 
 
