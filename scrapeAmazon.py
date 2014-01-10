@@ -14,7 +14,6 @@ def get_bol_bookList(url):
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
     columns = ['Timestamp', 'Author', 'Title', 'Pubdat', 'Rating']
 
-    # todo: Logic works but need to iterate 12 time per page. now takes first result per page
     for i in range(1,13):
         # collect and clean data
         item = BeautifulSoup(str(soup.find_all('div', 'product_content tst_searchresults_details_' + str(i))), 'lxml')
