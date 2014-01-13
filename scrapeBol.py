@@ -54,21 +54,15 @@ def get_bol_book_details(book_id_list):
         if len(rating) == 0:
             rating = str(0)
         else:
-            rating = str(soup.products.rating.string)
+            rating = soup.products.rating.string
 
-        '''
-
-        NEED TO FIX THE SHAPE OF ARRAY PASSED INTO DATAFRAME 8,8 shape but get 1,8
-
-        
-        '''
         arr = np.array([[timestamp],
                         [soup.products.id.string],
                         [soup.products.ean.string],
                         [soup.products.gpc.string],
                         [soup.products.title.string],
                         [soup.products.summary.string],
-                        rating,
+                        [rating],
                         [soup.products.attributegroups.contents]]).T
 
         if i == 1:
