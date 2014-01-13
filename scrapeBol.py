@@ -1,10 +1,15 @@
 __author__ = 'MICH'
+if __name__ == "__main__":
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+
 import re, time, datetime, numpy as np, pandas as pd
 from pandas import concat
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 
 BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+5260+7373+16638+14033/index.html'
+
 
 # Get list of unique product ID's
 def get_bol_book_list(url):
@@ -33,17 +38,18 @@ def get_bol_book_list(url):
 
     return unique
 
+
 # Get details per product ID's through API
 def get_bol_book_details(book_id_list):
 
     # clean and extract ids before parse
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    columns = ['Timestamp', ['BOL_Key'], 'EAN', 'GPC', 'Title', 'Summary', 'Rating', 'Attributes']
+    columns = ['Timestamp', ['BOL_Key'], 'EAN', 'GPC', 'Author', 'Title', 'Summary', 'Rating', 'Attributes']
 
-    for i in range(1, len(init)):
+    #len(init)
+    for i in range(1, 100):
         get_id = str(init[i]).split('/')[6]
 
-        #get_id = book_id_list[i][len(book_id_list[i])-17:len(book_id_list[i])-1]
         print get_id
         new_url = 'https://api.bol.com/catalog/v4/products/' + get_id + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
 
@@ -62,8 +68,12 @@ def get_bol_book_details(book_id_list):
                         [soup.products.id.string],
                         [soup.products.ean.string],
                         [soup.products.gpc.string],
+                        [soup.products.entitygroups.entities.value.contents],
                         [soup.products.title.string],
                         [soup.products.summary.string],
+                        [soup.products.offerdata.price.string],
+                        [soup.products.parentcategorypaths.contents],
+
                         [rating],
                         [soup.products.attributegroups.contents]]).T
 
@@ -79,19 +89,50 @@ def get_bol_book_details(book_id_list):
 init = get_bol_book_list(BASE_URL)
 test = get_bol_book_details(init)
 
-test.to_excel('newlist.xls')
+test.to_csv('newlist.csv')
+
 
 
 
 
 import pickle
 
-with open('fulllist.pickle', 'wb') as handle:
-  pickle.dump(test, handle)
+with open('init.pickle', 'wb') as handle:
+  pickle.dump(init, handle)
+
+
+
+
+with open('init.pickle','rb') as handle:
+    init = pickle.load(handle)
+
 
 test = get_bol_book_details(init)
 print init
 
 
+# parse attributes
+keys = soup.products.attributegroups.find_all('key')
+values = soup.products.attributegroups.find_all('value')
 
-    get_id = str(eachRow).split('/')[6]
+arr_val = np.array([list(values)]).T
+arr_key = np.array([list(keys)]).T
+
+
+pd.DataFrame(tmp_arr, columns=list(keys)).T
+
+
+
+
+for i in range(1, len(keys)):
+    tmp_arr = np.array([[values[i].string], [values[i].string]])
+
+
+
+    tmp_df = pd.DataFrame(tmp_arr, columns=list(keys[i]))
+    tmp_df2 = pd.DataFrame(tmp_arr, columns=list(keys[i]))
+
+
+    print tmp_df
+
+
