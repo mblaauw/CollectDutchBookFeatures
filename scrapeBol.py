@@ -12,7 +12,7 @@ BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrill
 
 
 # Get list of unique product ID's
-def get_bol_book_list(url):
+def get_bol_book_list(url, test=True):
     html = urlopen(url).read()
     soup = BeautifulSoup(html, 'lxml')
 
@@ -25,6 +25,9 @@ def get_bol_book_list(url):
     # determine maxmimum results and devide bij 12 (results per page)
     total_nr_of_items = re.sub('<[^>]+>', '', str(soup.find('span', 'tst_searchresults_nrFoundItems')))
     total_nr_of_items = int(round(int(float(total_nr_of_items.replace('.', '')))/12))
+
+    if test:
+        total_nr_of_items = 25
 
     for eachItem in range(1, total_nr_of_items):
         print 'Scraping link number: ' + str(eachItem)
@@ -46,8 +49,9 @@ def get_bol_book_details(book_id_list):
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
     columns = ['Timestamp', ['BOL_Key'], 'EAN', 'GPC', 'Author', 'Title', 'Summary', 'Rating', 'Attributes']
 
-    #len(init)
-    for i in range(1, 100):
+    nr_of_items = len(init)
+
+    for i in range(1, nr_of_items):
         get_id = str(init[i]).split('/')[6]
 
         print get_id
@@ -73,7 +77,6 @@ def get_bol_book_details(book_id_list):
                         [soup.products.summary.string],
                         [soup.products.offerdata.price.string],
                         [soup.products.parentcategorypaths.contents],
-
                         [rating],
                         [soup.products.attributegroups.contents]]).T
 
@@ -85,54 +88,66 @@ def get_bol_book_details(book_id_list):
 
     return df
 
+
+# Get dataframe with book attributes
+def get_bol_book_attributes(book_id_list):
+    for i in range(1, len(book_id_list)):
+        # DUMMY
+        get_id = str(init[i]).split('/')[6]
+        new_url = 'https://api.bol.com/catalog/v4/products/' + get_id + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+        html = urlopen(new_url).read()
+        soup = BeautifulSoup(html, 'lxml')
+
+        print 'Line: ' + str(i) + ' Parsing book ID :' + str(get_id)
+        # parse key attributes
+        keys = soup.products.attributegroups.find_all('key')
+        key_list = list(['Id'])
+
+        for eachKey in keys:
+            key_list.append(eachKey.string)
+
+        # parse value attributes
+        values = soup.products.attributegroups.find_all('value')
+        value_list = list([get_id])
+        for eachValue in values:
+            value_list.append(eachValue.string)
+
+        # Dump key/values into array
+        arr_val = np.array([value_list])
+        print arr_val
+
+        # build dataframe
+        if i == 1:
+            df = pd.DataFrame(arr_val, columns=key_list)
+        else:
+            df2 = pd.DataFrame(arr_val, columns=key_list)
+            df = concat([df, df2], ignore_index=True)
+
+    return df
+
+
 # Self test
 init = get_bol_book_list(BASE_URL)
 test = get_bol_book_details(init)
-
-test.to_csv('newlist.csv')
-
-
+attr = get_bol_book_attributes(init)
+#test.to_csv('newlist.csv')
 
 
 
+
+'''
 import pickle
-
 with open('init.pickle', 'wb') as handle:
   pickle.dump(init, handle)
-
-
-
-
 with open('init.pickle','rb') as handle:
     init = pickle.load(handle)
-
-
 test = get_bol_book_details(init)
 print init
+'''
 
 
-# parse attributes
-keys = soup.products.attributegroups.find_all('key')
-values = soup.products.attributegroups.find_all('value')
+import pip
+from subprocess import call
 
-arr_val = np.array([list(values)]).T
-arr_key = np.array([list(keys)]).T
-
-
-pd.DataFrame(tmp_arr, columns=list(keys)).T
-
-
-
-
-for i in range(1, len(keys)):
-    tmp_arr = np.array([[values[i].string], [values[i].string]])
-
-
-
-    tmp_df = pd.DataFrame(tmp_arr, columns=list(keys[i]))
-    tmp_df2 = pd.DataFrame(tmp_arr, columns=list(keys[i]))
-
-
-    print tmp_df
-
-
+for dist in pip.get_installed_distributions():
+    call("pip install --upgrade " + dist.project_name, shell=True)
