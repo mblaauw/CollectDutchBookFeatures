@@ -148,7 +148,7 @@ couch = couchdb.Server()  # assumes CouchDB is running on localhost:5894
 couch.delete('test')
 db = couch.create('test') # newly created
 
-init_str = json.dumps(init)
+init_str = json.dumps(init, separators=(',',':'))
 init_json = json.loads(init_str)
 
 #need jsob object
