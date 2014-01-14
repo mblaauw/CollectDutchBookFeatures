@@ -27,7 +27,7 @@ def get_bol_book_list(url, test=True):
     total_nr_of_items = int(round(int(float(total_nr_of_items.replace('.', '')))/12))
 
     if test:
-        total_nr_of_items = 25
+        total_nr_of_items = 10
 
     for eachItem in range(1, total_nr_of_items):
         print 'Scraping link number: ' + str(eachItem)
@@ -39,7 +39,12 @@ def get_bol_book_list(url, test=True):
         for eachRow in list(soup.find_all('a', 'product_name')):
             unique.append(eachRow.get('href'))
 
-    return unique
+    # clean the list and return from function
+    unique_result = list()
+    for i in range(1, len(unique)):
+        unique_result.append(str(unique[i]).split('/')[6])
+
+    return unique_result
 
 
 # Get details per product ID's through API
@@ -76,9 +81,8 @@ def get_bol_book_details(book_id_list):
                         [soup.products.title.string],
                         [soup.products.summary.string],
                         [soup.products.offerdata.price.string],
-                        [soup.products.parentcategorypaths.contents],
-                        [rating],
-                        [soup.products.attributegroups.contents]]).T
+                        [rating]
+                        ]).T
 
         if i == 1:
             df = pd.DataFrame(arr, columns=columns)
@@ -98,7 +102,6 @@ def get_bol_book_attributes(book_id_list):
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
-        print 'Line: ' + str(i) + ' Parsing book ID :' + str(get_id)
         # parse key attributes
         keys = soup.products.attributegroups.find_all('key')
         key_list = list(['Id'])
@@ -106,22 +109,26 @@ def get_bol_book_attributes(book_id_list):
         for eachKey in keys:
             key_list.append(eachKey.string)
 
-        # parse value attributes
-        values = soup.products.attributegroups.find_all('value')
-        value_list = list([get_id])
-        for eachValue in values:
-            value_list.append(eachValue.string)
-
-        # Dump key/values into array
-        arr_val = np.array([value_list])
-        print arr_val
-
-        # build dataframe
-        if i == 1:
-            df = pd.DataFrame(arr_val, columns=key_list)
+        # check for dupes, if found, ignore the row and move to the next
+        if len(key_list)!=len(set(key_list)):
+            print 'dupe found' + str(get_id) + ' line: ' + str(i)
         else:
-            df2 = pd.DataFrame(arr_val, columns=key_list)
-            df = concat([df, df2], ignore_index=True)
+            print 'Line: ' + str(i) + ' Parsing book ID :' + str(get_id)
+            # parse value attributes
+            values = soup.products.attributegroups.find_all('value')
+            value_list = list([get_id])
+            for eachValue in values:
+                value_list.append(eachValue.string)
+
+            # Dump key/values into array
+            arr_val = np.array([value_list])
+
+            # build dataframe
+            if i == 1:
+                df = pd.DataFrame(arr_val, columns=key_list)
+            else:
+                df2 = pd.DataFrame(arr_val, columns=key_list)
+                df = concat([df, df2], ignore_index=True)
 
     return df
 
@@ -132,7 +139,20 @@ test = get_bol_book_details(init)
 attr = get_bol_book_attributes(init)
 #test.to_csv('newlist.csv')
 
+#
+# Couchdb logic. Store all data in order to evalutate change over time
+#
+import couchdb
+import json
+couch = couchdb.Server()  # assumes CouchDB is running on localhost:5894
+couch.delete('test')
+db = couch.create('test') # newly created
 
+init_str = json.dumps(init)
+init_json = json.loads(init_str)
+
+#need jsob object
+db.save(json.loads(init_str))
 
 
 '''
@@ -145,9 +165,3 @@ test = get_bol_book_details(init)
 print init
 '''
 
-
-import pip
-from subprocess import call
-
-for dist in pip.get_installed_distributions():
-    call("pip install --upgrade " + dist.project_name, shell=True)
