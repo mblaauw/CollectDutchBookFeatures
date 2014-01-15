@@ -148,11 +148,22 @@ couch = couchdb.Server()  # assumes CouchDB is running on localhost:5894
 couch.delete('test')
 db = couch.create('test') # newly created
 
-init_str = json.dumps(init, separators=(',',':'))
-init_json = json.loads(init_str)
+# build ID column
+init_list = list()
+for eachId in init:
+    init_list.append('id')
 
-#need jsob object
-db.save(json.loads(init_str))
+zip_init = zip(init_list, init)
+
+# store in db as key/value
+for eachDict in zip_init:
+    dict_init = dict(zip_init)
+    db.save(dict_init)
+
+
+# Collect all ID's from db
+
+
 
 
 '''
@@ -165,3 +176,4 @@ test = get_bol_book_details(init)
 print init
 '''
 
+    x =dict(id=init)
