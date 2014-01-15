@@ -143,8 +143,9 @@ def get_bol_book_attributes(book_id_list):
 # Self test
 init = get_bol_book_list(BASE_URL, test=False)
 test = get_bol_book_details(init)
+test.to_csv('newlist.csv')
+
 attr = get_bol_book_attributes(init)
-#test.to_csv('newlist.csv')
 
 
 
