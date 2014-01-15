@@ -90,7 +90,6 @@ def get_bol_book_details(book_id_list):
                         [rating]
         ]).T
 
-
         if i == 1:
             df = pd.DataFrame(arr, columns=columns)
         else:
@@ -104,8 +103,8 @@ def get_bol_book_details(book_id_list):
 def get_bol_book_attributes(book_id_list):
     for i in range(1, len(book_id_list)):
         # DUMMY
-        get_id = str(init[i]).split('/')[6]
-        new_url = 'https://api.bol.com/catalog/v4/products/' + get_id + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+        get_id = book_id_list[i]
+        new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
