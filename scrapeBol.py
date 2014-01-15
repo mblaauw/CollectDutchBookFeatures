@@ -153,6 +153,7 @@ init_list = list()
 for eachId in init:
     init_list.append('id')
 
+# zip it up
 zip_init = zip(init_list, init)
 
 # store in db as key/value
