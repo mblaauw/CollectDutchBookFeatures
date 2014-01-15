@@ -52,15 +52,15 @@ def get_bol_book_details(book_id_list):
 
     # clean and extract ids before parse
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    columns = ['Timestamp', ['BOL_Key'], 'EAN', 'GPC', 'Author', 'Title', 'Summary', 'Rating', 'Attributes']
+    columns = ['Timestamp', 'BOL_Key', 'EAN', 'GPC', 'Author', 'Title', 'Publisher', 'Price', 'Rating']
 
     nr_of_items = len(init)
 
     for i in range(1, nr_of_items):
-        get_id = str(init[i]).split('/')[6]
+        get_id = book_id_list[i]
 
         print get_id
-        new_url = 'https://api.bol.com/catalog/v4/products/' + get_id + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+        new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
 
         # collect detailed html
         html = urlopen(new_url).read()
@@ -73,16 +73,23 @@ def get_bol_book_details(book_id_list):
         else:
             rating = soup.products.rating.string
 
+        # get author and publisher
+        auth_pub = soup.find_all('entities')
+        auth_pub_list = list()
+        for eachAuthPub in auth_pub:
+            auth_pub_list.append(eachAuthPub.value.contents)
+
         arr = np.array([[timestamp],
                         [soup.products.id.string],
                         [soup.products.ean.string],
                         [soup.products.gpc.string],
-                        [soup.products.entitygroups.entities.value.contents],
+                        auth_pub_list[0],
                         [soup.products.title.string],
-                        [soup.products.summary.string],
+                        auth_pub_list[1],
                         [soup.products.offerdata.price.string],
                         [rating]
-                        ]).T
+        ]).T
+
 
         if i == 1:
             df = pd.DataFrame(arr, columns=columns)
@@ -134,10 +141,14 @@ def get_bol_book_attributes(book_id_list):
 
 
 # Self test
-init = get_bol_book_list(BASE_URL)
+init = get_bol_book_list(BASE_URL, test=False)
 test = get_bol_book_details(init)
 attr = get_bol_book_attributes(init)
 #test.to_csv('newlist.csv')
+
+
+
+
 
 #
 # Couchdb logic. Store all data in order to evalutate change over time
