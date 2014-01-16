@@ -104,7 +104,7 @@ def get_bol_book_attributes(book_id_list):
     for i in range(1, len(book_id_list)):
         # DUMMY
         get_id = book_id_list[i]
-        new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+        new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=6B7C36DAC35D448C81938122EA8C7C1B&format=xml'
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
@@ -145,9 +145,6 @@ test = get_bol_book_details(init)
 test.to_csv('newlist.csv')
 
 attr = get_bol_book_attributes(init)
-
-
-
 
 
 #
