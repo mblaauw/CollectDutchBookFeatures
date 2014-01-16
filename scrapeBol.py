@@ -60,7 +60,7 @@ def get_bol_book_details(book_id_list):
         get_id = book_id_list[i]
 
         print get_id
-        new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+        new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=6B7C36DAC35D448C81938122EA8C7C1B&format=xml'
 
         # collect detailed html
         html = urlopen(new_url).read()
@@ -141,10 +141,20 @@ def get_bol_book_attributes(book_id_list):
 
 # Self test
 init = get_bol_book_list(BASE_URL, test=False)
-test = get_bol_book_details(init)
-test.to_csv('newlist.csv')
+attr1 = get_bol_book_attributes(init[0:5000])
+attr2 = get_bol_book_attributes(init[5000:10630])
+details1 = get_bol_book_details(init[0:5000])
+details2 = get_bol_book_details(init[5000:10630])
 
-attr = get_bol_book_attributes(init)
+
+details1.to_csv('details1_list.csv')
+details2.to_csv('details2_list.csv')
+
+attr1.to_csv('attr1.csv')
+attr2.to_csv('attr2.csv')
+
+
+
 
 
 #
@@ -154,7 +164,7 @@ import couchdb
 import json
 couch = couchdb.Server()  # assumes CouchDB is running on localhost:5894
 couch.delete('test')
-db = couch.create('test') # newly created
+db = couch.create('bolcom') # newly created
 
 # build ID column
 init_list = list()
