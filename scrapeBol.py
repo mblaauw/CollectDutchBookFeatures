@@ -52,11 +52,9 @@ def get_bol_book_details(book_id_list):
 
     # clean and extract ids before parse
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    columns = ['Timestamp', 'BOL_Key', 'EAN', 'GPC', 'Author', 'Title', 'Publisher', 'Price', 'Rating']
+    columns = ['Timestamp', 'BOL_Key', 'EAN', 'GPC', 'Title', 'Price', 'Rating']
 
-    nr_of_items = len(init)
-
-    for i in range(1, nr_of_items):
+    for i in range(1, len(book_id_list)):
         get_id = book_id_list[i]
 
         print get_id
@@ -73,19 +71,11 @@ def get_bol_book_details(book_id_list):
         else:
             rating = soup.products.rating.string
 
-        # get author and publisher
-        auth_pub = soup.find_all('entities')
-        auth_pub_list = list()
-        for eachAuthPub in auth_pub:
-            auth_pub_list.append(eachAuthPub.value.contents)
-
         arr = np.array([[timestamp],
                         [soup.products.id.string],
                         [soup.products.ean.string],
                         [soup.products.gpc.string],
-                        auth_pub_list[0],
                         [soup.products.title.string],
-                        auth_pub_list[1],
                         [soup.products.offerdata.price.string],
                         [rating]
         ]).T
@@ -144,10 +134,15 @@ init = get_bol_book_list(BASE_URL, test=False)
 attr1 = get_bol_book_attributes(init[0:5000])
 attr2 = get_bol_book_attributes(init[5000:10630])
 details1 = get_bol_book_details(init[0:5000])
-details2 = get_bol_book_details(init[5000:10630])
 
+details2 = get_bol_book_details(init[5000:10630])
+details2.to_excel('details2_list.xls')
 
 details1.to_csv('details1_list.csv')
+details1.to_excel('details1_list.xls')
+
+
+
 details2.to_csv('details2_list.csv')
 
 attr1.to_csv('attr1.csv')
