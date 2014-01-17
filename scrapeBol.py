@@ -71,12 +71,20 @@ def get_bol_book_details(book_id_list):
         else:
             rating = soup.products.rating.string
 
+        price = soup.find_all('price')
+        if len(price) == 0:
+            price = str(0)
+        else:
+            price = soup.products.offerdata.offers.price.string
+
+        print price
+
         arr = np.array([[timestamp],
                         [soup.products.id.string],
                         [soup.products.ean.string],
                         [soup.products.gpc.string],
                         [soup.products.title.string],
-                        [soup.products.offerdata.price.string],
+                        [price],
                         [rating]
         ]).T
 
@@ -139,6 +147,8 @@ details2 = get_bol_book_details(init[5000:10630])
 details2.to_excel('details2_list.xls')
 
 details1.to_csv('details1_list.csv')
+
+details2.to_excel('details2_list.xls')
 details1.to_excel('details1_list.xls')
 
 
