@@ -3,6 +3,8 @@ if __name__ == "__main__":
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
+import pandas as pd
+from pandas import concat
 import numpy as np
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
@@ -19,6 +21,8 @@ lines = isbn_file.readlines()
 lines = [line[:-1] for line in lines]
 
 lines = lines[1:10]
+
+columns = 'eachLine','title','author','productsize','productform','image','yearofpublication','numberofratings','averagerating','averagerating_five','numberofreviews','othercontributor','illustrated','translator','flaptext'
 
 for eachLine in lines:
     new_url = 'https://boekenliefde.nl/edition_info_get.api?key=47L0ss6cDInejrV8SpJmPk4AgxEZTpEXy0BNQzvQ&isbn=' + str(eachLine) + '&outputformat=xml'
@@ -99,12 +103,12 @@ for eachLine in lines:
                     [flaptext]
     ]).T
 
-
-    if i == 1:
-        df = pd.DataFrame(arr, columns=columns)
-    else:
+    if 'df' in locals() or 'df' in globals():
         df2 = pd.DataFrame(arr, columns=columns)
         df = concat([df, df2], ignore_index=True)
+    else:
+        df = pd.DataFrame(arr, columns=columns)
+
 
 
 
