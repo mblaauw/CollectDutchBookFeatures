@@ -20,9 +20,9 @@ isbn_file = open('unqiue_isbn10_list.txt', 'r')
 lines = isbn_file.readlines()
 lines = [line[:-1] for line in lines]
 
-lines = lines[1:10]
+# lines = lines[1:10]
 
-columns = 'eachLine','title','author','productsize','productform','image','yearofpublication','numberofratings','averagerating','averagerating_five','numberofreviews','othercontributor','illustrated','translator','flaptext'
+columns = 'ISBN13','Title','Author','ProductSize','ProductForm','Image','YearOfpublication','NumberOfRatings','AvgRating','AverageRating_five','NumberOfReviews','OtherContributor','Illustrated','Translator','Flaptext'
 
 for eachLine in lines:
     new_url = 'https://boekenliefde.nl/edition_info_get.api?key=47L0ss6cDInejrV8SpJmPk4AgxEZTpEXy0BNQzvQ&isbn=' + str(eachLine) + '&outputformat=xml'
