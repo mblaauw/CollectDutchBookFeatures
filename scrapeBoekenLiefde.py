@@ -111,5 +111,6 @@ for eachLine in lines:
 
 
 
+df.to_csv('details_boekenliefde.csv')
 
 
