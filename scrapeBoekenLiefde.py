@@ -20,7 +20,7 @@ isbn_file = open('unqiue_isbn10_list.txt', 'r')
 lines = isbn_file.readlines()
 lines = [line[:-1] for line in lines]
 
-# lines = lines[1:10]
+lines = lines[175:225]
 
 columns = 'ISBN13','Title','Author','ProductSize','ProductForm','Image','YearOfpublication','NumberOfRatings','AvgRating','AverageRating_five','NumberOfReviews','OtherContributor','Illustrated','Translator','Flaptext'
 
@@ -64,7 +64,7 @@ for eachLine in lines:
 
     averagerating_five = soup.response.find_all('averagerating_five')
     for eachAvgRatingFive in averagerating_five:
-        averagerating_five = eachAvgRatingFive
+        averagerating_five = eachAvgRatingFive.string
 
     numberofreviews = soup.response.find_all('numberofreviews')
     for eachNumOfRev in numberofreviews:
@@ -99,8 +99,8 @@ for eachLine in lines:
                     [numberofreviews],
                     [othercontributor],
                     [illustrated],
-                    [translator],
-                    [flaptext]
+                    [translator]
+                    # [flaptext]
     ]).T
 
     if 'df' in locals() or 'df' in globals():
@@ -111,6 +111,7 @@ for eachLine in lines:
 
 
 
-df.to_csv('details_boekenliefde.csv')
+
+df.to_csv('details_boekenliefde175-225.csv')
 
 
