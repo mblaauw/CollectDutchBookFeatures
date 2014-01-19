@@ -22,7 +22,7 @@ lines = [line[:-1] for line in lines]
 
 lines = lines[175:225]
 
-columns = 'ISBN13', 'Title', 'Author', 'ProductSize', 'ProductForm','Image','YearOfpublication','NumberOfRatings','AvgRating','AverageRating_five','NumberOfReviews','OtherContributor','Illustrated','Translator'
+columns = ('ISBN13', 'Title', 'Author', 'ProductSize', 'ProductForm','Image','YearOfpublication','NumberOfRatings','AvgRating','AverageRating_five','NumberOfReviews','OtherContributor','Illustrated','Translator')
 
 for eachLine in lines:
     new_url = 'https://boekenliefde.nl/edition_info_get.api?key=47L0ss6cDInejrV8SpJmPk4AgxEZTpEXy0BNQzvQ&isbn=' + str(eachLine) + '&outputformat=xml'
@@ -100,7 +100,6 @@ for eachLine in lines:
                     [othercontributor],
                     [illustrated],
                     [translator]
-                    # [flaptext]
     ]).T
 
     if 'df' in locals() or 'df' in globals():
@@ -115,4 +114,3 @@ for eachLine in lines:
 df.to_csv('details_boekenliefde175-225.csv')
 
 
-a
