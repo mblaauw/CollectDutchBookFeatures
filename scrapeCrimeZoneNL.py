@@ -10,16 +10,18 @@ from urllib2 import urlopen
 # http://www.crimezone.nl/web/Titels/Verschenen.htm?pagenr=1&queryElement=592958&sorton=rating%20desc
 # http://www.crimezone.nl/web/Auteurs.htm?pagenr=1&queryElement=618064
 
+
 def get_titles_rating():
 
     l_isbn = list()
     l_rating = list()
 
-    for i in range(1, 440):
+    for i in range(1, 399):
         new_url = 'http://www.crimezone.nl/web/Titels/Verschenen.htm?pagenr=' + str(i) + '&queryElement=592958&sorton=rating%20desc'
 
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(str(soup.find_all('div',{'id' : 'main-content'})), 'lxml')
 
         isbn = soup.find_all('div', 'query-field-div title')
         for eachTitle in isbn:
@@ -51,6 +53,7 @@ def get_author_rating():
 
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(str(soup.find_all('div',{'id' : 'main-content'})), 'lxml')
 
         person_name = soup.find_all('div', 'query-field-div person_name')
         first_name = soup.find_all('div', 'query-field-div firstname')
