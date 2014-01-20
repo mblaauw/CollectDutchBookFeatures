@@ -20,7 +20,7 @@ isbn_file = open('unqiue_isbn10_list.txt', 'r')
 lines = isbn_file.readlines()
 lines = [line[:-1] for line in lines]
 
-lines = lines[175:225]
+lines = lines[225:325]
 
 columns = ('ISBN13', 'Title', 'Author', 'ProductSize', 'ProductForm','Image','YearOfpublication','NumberOfRatings','AvgRating','AverageRating_five','NumberOfReviews','OtherContributor','Illustrated','Translator')
 
@@ -111,6 +111,6 @@ for eachLine in lines:
 
 
 
-df.to_csv('details_boekenliefde175-225.csv')
+df.to_excel('details_boekenliefde225-325.xls')
 
 
