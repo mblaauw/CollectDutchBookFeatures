@@ -1,3 +1,4 @@
+__author__ = 'MICH'
 from droopy import Droopy
 from droopy.static import Static
 from droopy.lang.english import English
