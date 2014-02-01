@@ -36,27 +36,44 @@ def get_bol_book_covers(url, test=True):
         soup = BeautifulSoup(html, 'lxml')
 
         for eachRow in list(soup.find_all('img')):
-
-            if 'itemprop=' in str(eachRow):
+            if 'itemprop=' in str(eachRow) and '.jpg' in str(eachRow):
                 unique.append(eachRow)
 
-    # Break up links in three columns: Title, ImgUrl and ISBN
+    # Break up links in three tuples: Title, ImgUrl and ISBN
     title = list()
     img = list()
     isbn = list()
 
-    for eachLine in input_list:
+    for eachLine in unique:
             title.append(str(eachLine).split('"')[1])
             img.append(str(eachLine).split('"')[5])
-            isbn.append(str(test.split('/')[11]).split('"')[0][:-4])
+            isbn.append(str(eachLine).split('/')[11].split('"')[0][:-4])
 
-    return zip(isbn, title, img)
+    # collect pubyears
+    rating = list()
+
+    for eachIsbn in isbn:
+        new_url = 'https://api.bol.com/catalog/v4/products/' + str(eachIsbn) +'/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+        html = urlopen(new_url).read()
+        soup = BeautifulSoup(html, 'lxml')
+
+        rating = soup.productlist.products.rating.string
+
+        rating.append(rating)
+
+    return zip(isbn, title, img, rating)
 
 
 
 
 
-testresult = get_bol_book_covers(BASE_URL, test=False)
+
+
+
+
+testresult = get_bol_book_covers(BASE_URL, test=True)
+
+
 parse_result = parse_image_list( testresult )
 
 
