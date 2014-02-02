@@ -6,6 +6,7 @@ if __name__ == "__main__":
 
 import re
 from bs4 import BeautifulSoup
+import urllib
 from urllib2 import urlopen
 
 BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293+5260+7373+16638/index.html'
@@ -51,6 +52,21 @@ def get_bol_book_cover_list(url, test=True):
 
     return zip(isbn, title, img)
 
+def download_covers_files_to_folder(input_list, output_folder= './data/covers/'):
+    for eachItem in testresult:
+        output_file = output_folder + eachItem[0] + '.jpg'
+        urllib.urlretrieve(eachItem[2], filename=output_file)
+
+
+# def build_cover_color_ma
+
+
+
+testresult = get_bol_book_cover_list(BASE_URL, test=True)
+download_covers_files_to_folder(testresult)
+
+
+
 
     '''
     # collect pubyears
@@ -64,17 +80,3 @@ def get_bol_book_cover_list(url, test=True):
         rating = soup.productlist.products.rating.string
         rating.append(rating)
     '''
-
-
-
-
-
-
-testresult = get_bol_book_covers(BASE_URL, test=True)
-for eachResult in testresult:
-
-
-parse_result = parse_image_list( testresult )
-
-
-testresult2= [i for i in testresult if i.attribute == 'img']
