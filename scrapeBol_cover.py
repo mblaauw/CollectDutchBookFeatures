@@ -12,7 +12,7 @@ BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrill
 
 
 # Get list of unique product ID's
-def get_bol_book_covers(url, test=True):
+def get_bol_book_cover_list(url, test=True):
     html = urlopen(url).read()
     soup = BeautifulSoup(html, 'lxml')
 
@@ -49,6 +49,10 @@ def get_bol_book_covers(url, test=True):
             img.append(str(eachLine).split('"')[5])
             isbn.append(str(eachLine).split('/')[11].split('"')[0][:-4])
 
+    return zip(isbn, title, img)
+
+
+    '''
     # collect pubyears
     rating = list()
 
@@ -58,13 +62,8 @@ def get_bol_book_covers(url, test=True):
         soup = BeautifulSoup(html, 'lxml')
 
         rating = soup.productlist.products.rating.string
-
         rating.append(rating)
-
-    return zip(isbn, title, img, rating)
-
-
-
+    '''
 
 
 
@@ -72,6 +71,7 @@ def get_bol_book_covers(url, test=True):
 
 
 testresult = get_bol_book_covers(BASE_URL, test=True)
+for eachResult in testresult:
 
 
 parse_result = parse_image_list( testresult )
