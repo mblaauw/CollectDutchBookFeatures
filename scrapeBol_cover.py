@@ -58,7 +58,7 @@ def download_covers_files_to_folder(input_list, output_folder= './data/covers/')
         urllib.urlretrieve(eachItem[2], filename=output_file)
 
 
-# def build_cover_color_ma
+
 
 
 
@@ -66,17 +66,41 @@ testresult = get_bol_book_cover_list(BASE_URL, test=True)
 download_covers_files_to_folder(testresult)
 
 
+#   iterate through each pixel in an image and
+#   determine the average rgb color
+
+# you will need to install the PIL module
+from PIL import Image
+
+class PixelCounter(object):
+  ''' loop through each pixel and average rgb '''
+  def __init__(self, imageName):
+      self.pic = Image.open(imageName)
+      # load image data
+      self.imgData = self.pic.load()
+  def averagePixels(self):
+      r, g, b = 0, 0, 0
+      count = 0
+      for x in xrange(self.pic.size[0]):
+          for y in xrange(self.pic.size[1]):
+              tempr,tempg,tempb = self.imgData[x,y]
+              r += tempr
+              g += tempg
+              b += tempb
+              count += 1
+      # calculate averages
+      return (r/count), (g/count), (b/count), count
+
+if __name__ == '__main__':
+  # assumes you have a test.jpg in the working directory!
+  pc = PixelCounter('./data/covers/666748892.jpg')
+  print "(red, green, blue, total_pixel_count)"
+  print pc.averagePixels()
 
 
-    '''
-    # collect pubyears
-    rating = list()
-
-    for eachIsbn in isbn:
-        new_url = 'https://api.bol.com/catalog/v4/products/' + str(eachIsbn) +'/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
-        html = urlopen(new_url).read()
-        soup = BeautifulSoup(html, 'lxml')
-
-        rating = soup.productlist.products.rating.string
-        rating.append(rating)
-    '''
+# for my picture the ouput rgb values are:
+#   (red, green, blue, total_pixel_count)
+#   (135, 122, 107, 10077696)
+#
+# you can see that my image had 10,077,696 pixels and python/PIL
+#   still churned right through it!
