@@ -3,7 +3,11 @@ if __name__ == "__main__":
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-
+import Image
+import scipy
+import scipy.misc
+import scipy.cluster
+import os
 import re
 from bs4 import BeautifulSoup
 import urllib
@@ -52,55 +56,46 @@ def get_bol_book_cover_list(url, test=True):
 
     return zip(isbn, title, img)
 
+# download physical
 def download_covers_files_to_folder(input_list, output_folder= './data/covers/'):
     for eachItem in testresult:
         output_file = output_folder + eachItem[0] + '.jpg'
         urllib.urlretrieve(eachItem[2], filename=output_file)
 
+# Calculate color values for all downloaded images
+def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/'):
 
+    isbn = list()
+    cover_color = list()
+
+    files = os.listdir(INPUT_FOLDER)
+    for eachFile in files:
+        print eachFile
+        im = Image.open(INPUT_FOLDER + eachFile)
+        im = im.resize((150, 150))                          # optional, to reduce time
+        ar = scipy.misc.fromimage(im)
+        shape = ar.shape
+        ar = ar.reshape(scipy.product(shape[:2]), shape[2])
+
+        # finding clusters
+        codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
+        # cluster centres:\n', codes
+
+        vecs, dist = scipy.cluster.vq.vq(ar, codes)         # assign codes
+        counts, bins = scipy.histogram(vecs, len(codes))    # count occurrences
+
+        index_max = scipy.argmax(counts)                    # find most frequent
+        peak = codes[index_max]
+        colour = ''.join(chr(c) for c in peak).encode('hex')
+
+        isbn.append(eachFile[:-4])
+        cover_color.append(colour)
+
+    result = zip(isbn, cover_color)
+    return result
 
 
 
 
 testresult = get_bol_book_cover_list(BASE_URL, test=True)
 download_covers_files_to_folder(testresult)
-
-
-#   iterate through each pixel in an image and
-#   determine the average rgb color
-
-# you will need to install the PIL module
-from PIL import Image
-
-class PixelCounter(object):
-  ''' loop through each pixel and average rgb '''
-  def __init__(self, imageName):
-      self.pic = Image.open(imageName)
-      # load image data
-      self.imgData = self.pic.load()
-  def averagePixels(self):
-      r, g, b = 0, 0, 0
-      count = 0
-      for x in xrange(self.pic.size[0]):
-          for y in xrange(self.pic.size[1]):
-              tempr,tempg,tempb = self.imgData[x,y]
-              r += tempr
-              g += tempg
-              b += tempb
-              count += 1
-      # calculate averages
-      return (r/count), (g/count), (b/count), count
-
-if __name__ == '__main__':
-  # assumes you have a test.jpg in the working directory!
-  pc = PixelCounter('./data/covers/666748892.jpg')
-  print "(red, green, blue, total_pixel_count)"
-  print pc.averagePixels()
-
-
-# for my picture the ouput rgb values are:
-#   (red, green, blue, total_pixel_count)
-#   (135, 122, 107, 10077696)
-#
-# you can see that my image had 10,077,696 pixels and python/PIL
-#   still churned right through it!
