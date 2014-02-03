@@ -13,14 +13,13 @@ from bs4 import BeautifulSoup
 import urllib
 from urllib2 import urlopen
 
-BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293+5260+7373+16638/index.html'
-
+#BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293+5260+7373+16638/index.html'
+BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/0/section/books/index.html'
 
 # Get list of unique product ID's
 def get_bol_book_cover_list(url, test=True):
     html = urlopen(url).read()
     soup = BeautifulSoup(html, 'lxml')
-
     unique = list()
 
     # collect the motherload (minus one, cause less results on final page)
@@ -35,8 +34,9 @@ def get_bol_book_cover_list(url, test=True):
     # Collect all IMG tages and filter out the proper ones
     for eachItem in range(1, total_nr_of_items):
         print 'Scraping link number: ' + str(eachItem)
-        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293/No/' + str(eachItem * 12) + '/section/books/index.html'
 
+        #new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
+        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
@@ -52,15 +52,20 @@ def get_bol_book_cover_list(url, test=True):
     for eachLine in unique:
             title.append(str(eachLine).split('"')[1])
             img.append(str(eachLine).split('"')[5])
-            isbn.append(str(eachLine).split('/')[11].split('"')[0][:-4])
+
+            tmp_isbn = str(eachLine).split('"')[5].split('/')
+            tmp_isbn = tmp_isbn[len(tmp_isbn)-1]
+            isbn.append(tmp_isbn[:-4])
 
     return zip(isbn, title, img)
+
 
 # download physical
 def download_covers_files_to_folder(input_list, output_folder= './data/covers/'):
     for eachItem in testresult:
         output_file = output_folder + eachItem[0] + '.jpg'
         urllib.urlretrieve(eachItem[2], filename=output_file)
+
 
 # Calculate color values for all downloaded images
 def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/'):
@@ -96,6 +101,6 @@ def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/
 
 
 
-
-testresult = get_bol_book_cover_list(BASE_URL, test=True)
+testresult = get_bol_book_cover_list(BASE_URL, test=False)
 download_covers_files_to_folder(testresult)
+result = tag_images_with_color_value()

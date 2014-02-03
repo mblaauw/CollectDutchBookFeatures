@@ -8,9 +8,8 @@ from pandas import concat
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 
-BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+5260+7373+16638+14033/index.html'
-
-
+#BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293+5260+7373+16638/index.html'
+BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/0/section/books/index.html'
 
 
 # Get list of unique product ID's
@@ -33,7 +32,8 @@ def get_bol_book_list(url, test=True):
 
     for eachItem in range(1, total_nr_of_items):
         print 'Scraping link number: ' + str(eachItem)
-        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
+        # new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293/No/' + str(eachItem * 12) + '/section/books/index.html'
+        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
 
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
@@ -54,7 +54,7 @@ def get_bol_book_details(book_id_list):
 
     # clean and extract ids before parse
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    columns = ['Timestamp', 'BOL_Key', 'EAN', 'GPC', 'Title', 'Price', 'Rating']
+    columns = ['Timestamp', 'BOL_Key', 'EAN', 'GPC', 'Title', 'Price', 'Rating', 'Summary']
 
     for i in range(1, len(book_id_list)):
         get_id = book_id_list[i]
@@ -73,6 +73,14 @@ def get_bol_book_details(book_id_list):
         else:
             rating = soup.products.rating.string
 
+        # trap the summary attribute. Sometimes doesnt exist. Zero them if this happens
+        summary = soup.find_all('summary')
+        if len(summary) == 0:
+            summary = str(0)
+        else:
+            summary = soup.products.summary.string
+
+
         price = soup.find_all('price')
         if len(price) == 0:
             price = str(0)
@@ -87,7 +95,8 @@ def get_bol_book_details(book_id_list):
                         [soup.products.gpc.string],
                         [soup.products.title.string],
                         [price],
-                        [rating]
+                        [rating],
+                        [summary]
         ]).T
 
         if i == 1:
