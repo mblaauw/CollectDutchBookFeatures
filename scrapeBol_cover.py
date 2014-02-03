@@ -104,3 +104,4 @@ def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/
 testresult = get_bol_book_cover_list(BASE_URL, test=False)
 download_covers_files_to_folder(testresult)
 result = tag_images_with_color_value()
+
