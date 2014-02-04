@@ -15,8 +15,8 @@ from urllib2 import urlopen
 
 
 
-BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/0/section/books/index.html'
-#BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/0/section/books/index.html'
+#BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/0/section/books/index.html'
+BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/0/section/books/index.html'
 
 # Get list of unique product ID's
 def get_bol_book_cover_list(url, test=True):
@@ -37,8 +37,8 @@ def get_bol_book_cover_list(url, test=True):
     for eachItem in range(1, total_nr_of_items):
         print 'Scraping link number: ' + str(eachItem)
 
-        #new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
-        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
+        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
+        #new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
@@ -64,7 +64,7 @@ def get_bol_book_cover_list(url, test=True):
 
 # download physical
 def download_covers_files_to_folder(input_list, output_folder= './data/covers/'):
-    for eachItem in testresult:
+    for eachItem in input_list:
         output_file = output_folder + eachItem[0] + '.jpg'
         urllib.urlretrieve(eachItem[2], filename=output_file)
 
@@ -107,3 +107,10 @@ testresult = get_bol_book_cover_list(BASE_URL, test=False)
 download_covers_files_to_folder(testresult)
 result = tag_images_with_color_value()
 
+
+import pickle
+testresult  = pickle.load( open( "lit-covers.pickle", "rb" ) )
+
+testresult2 = testresult[27000:]
+
+download_covers_files_to_folder(testresult2, output_folder= './data/covers2/')
