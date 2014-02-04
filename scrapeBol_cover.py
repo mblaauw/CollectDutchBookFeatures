@@ -14,8 +14,7 @@ import urllib
 from urllib2 import urlopen
 
 
-
-BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/0/section/books/index.html'
+BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/36336/section/books/index.html'
 #BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/0/section/books/index.html'
 
 # Get list of unique product ID's
@@ -31,7 +30,7 @@ def get_bol_book_cover_list(url, test=True):
 
     # check for test run to save on waiting time
     if test:
-        total_nr_of_items = 10
+        total_nr_of_items = 2000
 
     # Collect all IMG tages and filter out the proper ones
     for eachItem in range(1, total_nr_of_items):
