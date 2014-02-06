@@ -148,68 +148,24 @@ def get_bol_book_attributes(book_id_list):
     return df
 
 
-# Self test
-init = get_bol_book_list(BASE_URL, test=False)
-attr1 = get_bol_book_attributes(init[0:5000])
-attr2 = get_bol_book_attributes(init[5000:10630])
-details1 = get_bol_book_details(init[0:5000])
+def get_pubdates(book_id_list):
+    summary = []
+    isbn = []
 
-details2 = get_bol_book_details(init[5000:10630])
-details2.to_excel('details2_list.xls')
+    for eachIsbn in book_id_list:
+        url = 'https://api.bol.com/catalog/v4/products/' + str(
+            eachIsbn) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+        html = urlopen(url).read()
+        soup = BeautifulSoup(html, 'lxml')
 
-details1.to_csv('details1_list.csv')
+        isbn.append(eachIsbn)
+        summary.append(soup.productlist.products.sumamry.string)
 
-details2.to_excel('details2_list.xls')
-details1.to_excel('details1_list.xls')
-
-
-
-details2.to_csv('details2_list.csv')
-
-attr1.to_csv('attr1.csv')
-attr2.to_csv('attr2.csv')
+    result = zip(isbn, summary)
+    return result
 
 
 
 
 
-#
-# Couchdb logic. Store all data in order to evalutate change over time
-#
-import couchdb
-import json
-couch = couchdb.Server()  # assumes CouchDB is running on localhost:5894
-couch.delete('test')
-db = couch.create('bolcom') # newly created
-
-# build ID column
-init_list = list()
-for eachId in init:
-    init_list.append('id')
-
-# zip it up
-zip_init = zip(init_list, init)
-
-# store in db as key/value
-for eachDict in zip_init:
-    dict_init = dict(zip_init)
-    db.save(dict_init)
-
-
-# Collect all ID's from db
-
-
-
-
-'''
-import pickle
-with open('init.pickle', 'wb') as handle:
-  pickle.dump(init, handle)
-with open('init.pickle','rb') as handle:
-    init = pickle.load(handle)
-test = get_bol_book_details(init)
-print init
-'''
-
-    x =dict(id=init)
 
