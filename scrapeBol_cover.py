@@ -78,10 +78,14 @@ def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/
     for eachFile in files:
         print eachFile
         im = Image.open(INPUT_FOLDER + eachFile)
-        im = im.resize((150, 150))                          # optional, to reduce time
+        im = im.resize((50, 50))                          # optional, to reduce time
         ar = scipy.misc.fromimage(im)
         shape = ar.shape
-        ar = ar.reshape(scipy.product(shape[:2]), shape[2])
+
+        if len(shape) == 2:
+            ar = ar.reshape(scipy.product(shape[:1]), shape[1])
+        else:
+            ar = ar.reshape(scipy.product(shape[:2]), shape[2])
 
         # finding clusters
         codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
@@ -104,5 +108,6 @@ def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/
 
 testresult = get_bol_book_cover_list(BASE_URL, test=False)
 download_covers_files_to_folder(testresult)
+
 result = tag_images_with_color_value()
 
