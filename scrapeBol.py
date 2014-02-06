@@ -111,10 +111,13 @@ def get_bol_book_details(book_id_list):
 
 # Get dataframe with book attributes
 def get_bol_book_attributes(book_id_list):
-    for i in range(1, len(book_id_list)):
+    for i in range(0, len(book_id_list)):
         # DUMMY
+
         get_id = book_id_list[i]
         new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=6B7C36DAC35D448C81938122EA8C7C1B&format=xml'
+        print new_url
+
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
@@ -176,9 +179,62 @@ def get_pubdates(book_id_list):
 output = get_pubdates(result)
 
 import pickle
-
 pickle.dump(output, open('color_covers_types_pubdate.pickle', "w"))
-
 pickle.dump(result, open('color_covers.pickle', "w"))
 result = pickle.load(open("color_covers.pickle", "r"))
 
+import csv
+
+myfile = open('color_covers_types_pubdate.csv', 'wb')
+wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+wr.writerow(output)
+
+isbn = list()
+color = list()
+detail = list()
+for i in range(0, len(output) - 1):
+    isbn.append(output[i][0])
+    color.append(output[i][1])
+    detail.append(output[i][2])
+
+output_final = zip(isbn, color, detail)
+
+import csv
+
+myfile = open('color_covers_types_pubdate.csv', 'wb')
+csv_writer = csv.writer(myfile, delimiter='\t')
+rows = output
+csv_writer.writerows(rows)
+
+idlist = ('9789029576291',
+          '9789029577908',
+          '9789029579735',
+          '9789029580151',
+          '9789029582193',
+          '9789029574983',
+          '9789029575249',
+          '9789029575317',
+          '9789029575317',
+          '9789029578592',
+          '9789029573580',
+          '9789029573580',
+          '9789029573580',
+          '9789029586115',
+          '9789029573580',
+          '9789029575935',
+          '9789029576048',
+          '9789029578592',
+          '9789029573580',
+          '9789029584869',
+          '9789029573580',
+          '9789029575935',
+          '9789029575935',
+          '9789029578592',
+          '9789029578592',
+          '9789029575935',
+          '9789029578592',
+          '9789029586092',
+          '9789029575980',
+          '9789029578592',
+          '9789029575935',
+          '9789029592611')
