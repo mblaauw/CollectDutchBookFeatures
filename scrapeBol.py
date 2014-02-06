@@ -3,6 +3,7 @@ if __name__ == "__main__":
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
+import sys
 import re, time, datetime, numpy as np, pandas as pd
 from pandas import concat
 from bs4 import BeautifulSoup
@@ -150,22 +151,34 @@ def get_bol_book_attributes(book_id_list):
 
 def get_pubdates(book_id_list):
     summary = []
+    color = []
     isbn = []
 
     for eachIsbn in book_id_list:
-        url = 'https://api.bol.com/catalog/v4/products/' + str(
-            eachIsbn) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
-        html = urlopen(url).read()
-        soup = BeautifulSoup(html, 'lxml')
+        try:
+            url = 'https://api.bol.com/catalog/v4/products/' + str(
+                eachIsbn[0]) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+            html = urlopen(url).read()
+            soup = BeautifulSoup(html, 'lxml')
 
-        isbn.append(eachIsbn)
-        summary.append(soup.productlist.products.sumamry.string)
+            soup.productlist.products.summary.string
+            isbn.append(eachIsbn[0])
+            color.append(eachIsbn[1])
+            summary.append(soup.productlist.products.summary.string)
+        except:
+            e = sys.exc_info()[0]
+            print ( "Error: %s" % e )
 
-    result = zip(isbn, summary)
+    result = zip(isbn, color, summary)
     return result
 
 
+output = get_pubdates(result)
 
+import pickle
 
+pickle.dump(output, open('color_covers_types_pubdate.pickle', "w"))
 
+pickle.dump(result, open('color_covers.pickle', "w"))
+result = pickle.load(open("color_covers.pickle", "r"))
 

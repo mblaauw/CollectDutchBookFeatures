@@ -27,7 +27,7 @@ def get_bol_book_cover_list(url, test=True):
     # collect the motherload (minus one, cause less results on final page)
     # determine maxmimum results and devide bij 12 (results per page)
     total_nr_of_items = re.sub('<[^>]+>', '', str(soup.find('span', 'tst_searchresults_nrFoundItems')))
-    total_nr_of_items = int(round(int(float(total_nr_of_items.replace('.', '')))/12))
+    total_nr_of_items = int(round(int(float(total_nr_of_items.replace('.', ''))) / 12))
 
     # check for test run to save on waiting time
     if test:
@@ -38,7 +38,8 @@ def get_bol_book_cover_list(url, test=True):
         print 'Scraping link number: ' + str(eachItem)
 
         #new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
-        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/' + str(eachItem * 12) + '/section/books/index.html'
+        new_url = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/' + str(
+            eachItem * 12) + '/section/books/index.html'
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
@@ -52,26 +53,25 @@ def get_bol_book_cover_list(url, test=True):
     isbn = list()
 
     for eachLine in unique:
-            title.append(str(eachLine).split('"')[1])
-            img.append(str(eachLine).split('"')[5])
+        title.append(str(eachLine).split('"')[1])
+        img.append(str(eachLine).split('"')[5])
 
-            tmp_isbn = str(eachLine).split('"')[5].split('/')
-            tmp_isbn = tmp_isbn[len(tmp_isbn)-1]
-            isbn.append(tmp_isbn[:-4])
+        tmp_isbn = str(eachLine).split('"')[5].split('/')
+        tmp_isbn = tmp_isbn[len(tmp_isbn) - 1]
+        isbn.append(tmp_isbn[:-4])
 
     return zip(isbn, title, img)
 
 
 # download physical
-def download_covers_files_to_folder(input_list, output_folder= './data/covers/'):
+def download_covers_files_to_folder(input_list, output_folder='./data/covers/'):
     for eachItem in testresult:
         output_file = output_folder + eachItem[0] + '.jpg'
         urllib.urlretrieve(eachItem[2], filename=output_file)
 
 
 # Calculate color values for all downloaded images
-def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/'):
-
+def tag_images_with_color_value(NUM_CLUSTERS=5, INPUT_FOLDER='./data/covers/'):
     isbn = list()
     cover_color = list()
 
@@ -108,7 +108,6 @@ def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/
 
     result = zip(isbn, cover_color)
     return result
-
 
 
 testresult = get_bol_book_cover_list(BASE_URL, test=False)
