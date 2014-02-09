@@ -13,8 +13,6 @@ from bs4 import BeautifulSoup
 import urllib
 from urllib2 import urlopen
 
-
-
 #BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/0/section/books/index.html'
 BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-nieuw/N/255+8293+14033/No/0/section/books/index.html'
 
@@ -70,7 +68,7 @@ def download_covers_files_to_folder(input_list, output_folder= './data/covers/')
 
 
 # Calculate color values for all downloaded images
-def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/'):
+def tag_images_with_color_value(NUM_CLUSTERS = 4, INPUT_FOLDER = './data/covers/'):
 
     isbn = list()
     cover_color = list()
@@ -79,10 +77,15 @@ def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/
     for eachFile in files:
         print eachFile
         im = Image.open(INPUT_FOLDER + eachFile)
-        im = im.resize((150, 150))                          # optional, to reduce time
+        im = im.resize((50, 50))                          # optional, to reduce time
         ar = scipy.misc.fromimage(im)
         shape = ar.shape
-        ar = ar.reshape(scipy.product(shape[:2]), shape[2])
+        print len(shape)
+
+        if len(shape) == 2:
+            ar = ar.reshape(scipy.product(shape[:1]), shape[1])
+        else:
+            ar = ar.reshape(scipy.product(shape[:2]), shape[2])
 
         # finding clusters
         codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
@@ -103,12 +106,18 @@ def tag_images_with_color_value(NUM_CLUSTERS = 5, INPUT_FOLDER = './data/covers/
 
 
 
-testresult = get_bol_book_cover_list(BASE_URL, test=False)
-download_covers_files_to_folder(testresult)
+
+
 result = tag_images_with_color_value()
 
 
+testresult = get_bol_book_cover_list(BASE_URL, test=False)
 import pickle
+pickle.dump(testresult, open( "thr-covers.pickle", "wb" ) )
+download_covers_files_to_folder(testresult)
+
+
+
 testresult  = pickle.load( open( "lit-covers.pickle", "rb" ) )
 
 testresult2 = testresult[27000:]
