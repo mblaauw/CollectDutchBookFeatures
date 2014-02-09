@@ -3,6 +3,7 @@ if __name__ == "__main__":
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
+import sys
 import re, time, datetime, numpy as np, pandas as pd
 from pandas import concat
 from bs4 import BeautifulSoup
@@ -110,10 +111,13 @@ def get_bol_book_details(book_id_list):
 
 # Get dataframe with book attributes
 def get_bol_book_attributes(book_id_list):
-    for i in range(1, len(book_id_list)):
+    for i in range(0, len(book_id_list)):
         # DUMMY
+
         get_id = book_id_list[i]
         new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=6B7C36DAC35D448C81938122EA8C7C1B&format=xml'
+        print new_url
+
         html = urlopen(new_url).read()
         soup = BeautifulSoup(html, 'lxml')
 
@@ -148,68 +152,89 @@ def get_bol_book_attributes(book_id_list):
     return df
 
 
-# Self test
-init = get_bol_book_list(BASE_URL, test=False)
-attr1 = get_bol_book_attributes(init[0:5000])
-attr2 = get_bol_book_attributes(init[5000:10630])
-details1 = get_bol_book_details(init[0:5000])
+def get_pubdates(book_id_list):
+    summary = []
+    color = []
+    isbn = []
 
-details2 = get_bol_book_details(init[5000:10630])
-details2.to_excel('details2_list.xls')
+    for eachIsbn in book_id_list:
+        try:
+            url = 'https://api.bol.com/catalog/v4/products/' + str(
+                eachIsbn[0]) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
+            html = urlopen(url).read()
+            soup = BeautifulSoup(html, 'lxml')
 
-details1.to_csv('details1_list.csv')
+            soup.productlist.products.summary.string
+            isbn.append(eachIsbn[0])
+            color.append(eachIsbn[1])
+            summary.append(soup.productlist.products.summary.string)
+        except:
+            e = sys.exc_info()[0]
+            print ( "Error: %s" % e )
 
-details2.to_excel('details2_list.xls')
-details1.to_excel('details1_list.xls')
-
-
-
-details2.to_csv('details2_list.csv')
-
-attr1.to_csv('attr1.csv')
-attr2.to_csv('attr2.csv')
-
-
-
-
-
-#
-# Couchdb logic. Store all data in order to evalutate change over time
-#
-import couchdb
-import json
-couch = couchdb.Server()  # assumes CouchDB is running on localhost:5894
-couch.delete('test')
-db = couch.create('bolcom') # newly created
-
-# build ID column
-init_list = list()
-for eachId in init:
-    init_list.append('id')
-
-# zip it up
-zip_init = zip(init_list, init)
-
-# store in db as key/value
-for eachDict in zip_init:
-    dict_init = dict(zip_init)
-    db.save(dict_init)
+    result = zip(isbn, color, summary)
+    return result
 
 
-# Collect all ID's from db
+output = get_pubdates(result)
 
-
-
-
-'''
 import pickle
-with open('init.pickle', 'wb') as handle:
-  pickle.dump(init, handle)
-with open('init.pickle','rb') as handle:
-    init = pickle.load(handle)
-test = get_bol_book_details(init)
-print init
-'''
+pickle.dump(output, open('color_covers_types_pubdate.pickle', "w"))
+pickle.dump(result, open('color_covers.pickle', "w"))
+result = pickle.load(open("color_covers.pickle", "r"))
 
-    x =dict(id=init)
+import csv
 
+myfile = open('color_covers_types_pubdate.csv', 'wb')
+wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+wr.writerow(output)
+
+isbn = list()
+color = list()
+detail = list()
+for i in range(0, len(output) - 1):
+    isbn.append(output[i][0])
+    color.append(output[i][1])
+    detail.append(output[i][2])
+
+output_final = zip(isbn, color, detail)
+
+import csv
+
+myfile = open('color_covers_types_pubdate.csv', 'wb')
+csv_writer = csv.writer(myfile, delimiter='\t')
+rows = output
+csv_writer.writerows(rows)
+
+idlist = ('9789029576291',
+          '9789029577908',
+          '9789029579735',
+          '9789029580151',
+          '9789029582193',
+          '9789029574983',
+          '9789029575249',
+          '9789029575317',
+          '9789029575317',
+          '9789029578592',
+          '9789029573580',
+          '9789029573580',
+          '9789029573580',
+          '9789029586115',
+          '9789029573580',
+          '9789029575935',
+          '9789029576048',
+          '9789029578592',
+          '9789029573580',
+          '9789029584869',
+          '9789029573580',
+          '9789029575935',
+          '9789029575935',
+          '9789029578592',
+          '9789029578592',
+          '9789029575935',
+          '9789029578592',
+          '9789029586092',
+          '9789029575980',
+          '9789029578592',
+          '9789029575935',
+          '9789029592611')
