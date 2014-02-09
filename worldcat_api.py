@@ -21,7 +21,7 @@ url = list()
 year = list()
 
 
-get_worldcat_metadata(input_list)
+
 
 def get_worldcat_metadata(input_list):
     for eachIsbn in input_list:
@@ -96,3 +96,8 @@ def get_worldcat_metadata(input_list):
 
     result = zip(isbn, author, title, city, ed, form, lang, oclcnum, originallang, publisher, url, year)
     return result
+
+
+output = get_worldcat_metadata(input_list)
+
+
