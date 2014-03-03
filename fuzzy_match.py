@@ -26,6 +26,7 @@ for eachLookup in lookup_list:
             ratios.append(ratio)
             gea_book.append(find_book)
             epub_book.append(eachBook)
+            print find_book, eachBook
 
 
 result = zip(ratios, gea_book, epub_book)
