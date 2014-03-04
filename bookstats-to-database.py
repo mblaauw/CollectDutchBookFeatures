@@ -2,22 +2,36 @@ __author__ = 'mich'
 
 import os
 import sys
-import readability
-
-rd = readability.Readability
-
-rd.ARI('dsadsdas')
+import readability as red
 
 
-input_folder = '/Users/mich/datascience-projects/dutch-text-analytics/data/misc-nl/'
+
+input_folder = '/Users/mich/datascience-projects/dutch-text-analytics/data/misc-nl/test.txt'
 input_ext = '*.txt'
+
+
+file = open(input_folder, 'r')
+
+txt = file.read()
+
+
+rd = red.Readability(txt).ARI()
+
+
+
+
+
+
 
 for file in os.listdir(input_folder):
     current = os.path.join(input_folder, file)
     if os.path.isfile(current):
-        data = open(current, "rb")
+        data = open(current, "r")
         text = data.read()
+        rd = red.Readability(text)
+
+        rd.ARI()
 
 
 
-        print text
+data = open(current, "r")
