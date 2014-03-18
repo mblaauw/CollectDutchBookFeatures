@@ -4,16 +4,12 @@ import os
 import sys
 import readability as red
 
-
-
-input_folder = '/Users/mich/datascience-projects/dutch-text-analytics/data/misc-nl/Anna Karenina - Leo Nikolaj Tolstoj.txt'
+input_folder = '/Users/mblaauw/Downloads/04_R_PROJECTS/DutchTextAnalytics/data/misc-nl/Anna Karenina - Leo Nikolaj Tolstoj.txt'
 input_ext = '*.txt'
 
-
 file = open(input_folder, 'r')
-
 txt = file.read()
-
+txt = unicode(txt, errors='ignore')
 
 red.Readability(txt).ARI()
 red.Readability(txt).ColemanLiauIndex()
