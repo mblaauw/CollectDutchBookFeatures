@@ -6,23 +6,28 @@ import readability as red
 
 
 
-input_folder = '/Users/mich/datascience-projects/dutch-text-analytics/data/misc-nl/Anna Karenina - Leo Nikolaj Tolstoj.txt'
+input_folder = '/Users/mich/datascience-projects/dutch-text-analytics/data/misc-nl/Orka in vrijheid.txt'
 input_ext = '*.txt'
 
 
 file = open(input_folder, 'r')
-
 txt = file.read()
+txt = str(unicode(txt, errors='ignore'))
+
+readability_score = list()
+
+readability_score.append([red.Readability(txt).ARI(),
+                          red.Readability(txt).ColemanLiauIndex(),
+                          red.Readability(txt).FleschKincaidGradeLevel(),
+                          red.Readability(txt).FleschReadingEase(),
+                          red.Readability(txt).GunningFogIndex(),
+                          red.Readability(txt).LIX(),
+                          red.Readability(txt).RIX(),
+                          red.Readability(txt).SMOGIndex()])
 
 
-red.Readability(txt).ARI()
-red.Readability(txt).ColemanLiauIndex()
-red.Readability(txt).FleschKincaidGradeLevel()
-red.Readability(txt).FleschReadingEase()
-red.Readability(txt).GunningFogIndex()
-red.Readability(txt).LIX()
-red.Readability(txt).RIX()
-red.Readability(txt).SMOGIndex()
+
+
 
 
 
