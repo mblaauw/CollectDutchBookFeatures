@@ -28,11 +28,6 @@ readability_score.append([red.Readability(txt).ARI(),
 
 
 
-
-
-
-
-
 for file in os.listdir(input_folder):
     current = os.path.join(input_folder, file)
     if os.path.isfile(current):
