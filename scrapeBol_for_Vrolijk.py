@@ -74,7 +74,7 @@ def get_bol_book_details(book_id_list, test=True):
         new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=6B7C36DAC35D448C81938122EA8C7C1B&format=xml'
 
         # collect detailed html
-        html = urlopen(new_url, timeout=5).read()
+        html = urlopen(new_url, timeout=30000).read()
         soup = BeautifulSoup(html, 'lxml')
 
         # trap the rating attribute. Sometimes doesnt exist. Zero them if this happens
