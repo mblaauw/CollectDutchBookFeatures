@@ -1,13 +1,17 @@
 __author__ = 'MBlaauw'
+if __name__ == "__main__":
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
 
 import sys
 import re, time, datetime, numpy as np, pandas as pd
 from pandas import concat
 from bs4 import BeautifulSoup
-from urllib2 import urlopen
+from urllib2 import urlopen, install_opener, build_opener, HTTPSHandler
 
-#sys.setdefaultencoding("utf-8")
+
+
 #BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293+5260+7373+16638/index.html'
 #BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/0/section/books/index.html'
 
@@ -74,7 +78,15 @@ def get_bol_book_details(book_id_list, test=True):
         new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=6B7C36DAC35D448C81938122EA8C7C1B&format=xml'
 
         # collect detailed html
-        html = urlopen(new_url, timeout=30000).read()
+        try:
+            html = urlopen(new_url, timeout=30000).read()
+        except IOError as e:
+            print "I/O error({0}): {1}".format(e.errno, e.strerror)
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+            raise
+
+
         soup = BeautifulSoup(html, 'lxml')
 
         # trap the rating attribute. Sometimes doesnt exist. Zero them if this happens
