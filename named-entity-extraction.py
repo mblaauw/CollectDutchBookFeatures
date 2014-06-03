@@ -19,8 +19,6 @@ for line in data:
 f.close()
 
 
-
-
 # TEST 2
 import nltk
 sentence = """At eight o'clock on Thursday morning Arthur didn't feel very good."""
@@ -32,3 +30,42 @@ tagged[0:6]
 
 entities = nltk.chunk.ne_chunk(tagged)
 entities
+
+
+
+
+
+
+
+
+# Approach3
+str = 'Christiane heeft een lam.'
+
+tagger = nltk.data.load('taggers/dutch.pickle')
+chunker = nltk.data.load('chunkers/dutch.pickle')
+
+str_tags = tagger.tag(nltk.word_tokenize(str))
+print str_tags
+
+str_chunks = chunker.parse(str_tags)
+print str_chunks
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
