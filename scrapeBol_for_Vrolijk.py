@@ -122,85 +122,14 @@ def get_bol_book_details(book_id_list, test=True):
     return df
 
 
-# Get dataframe with book attributes
-def get_bol_book_attributes(book_id_list):
-    for i in range(0, len(book_id_list)):
-        # DUMMY
-
-        get_id = book_id_list[i]
-        new_url = 'https://api.bol.com/catalog/v4/products/' + str(get_id) + '/?apikey=6B7C36DAC35D448C81938122EA8C7C1B&format=xml'
-        print new_url
-
-        html = urlopen(new_url).read()
-        soup = BeautifulSoup(html, 'lxml')
-
-        # parse key attributes
-        keys = soup.products.attributegroups.find_all('key')
-        key_list = list(['Id'])
-
-        for eachKey in keys:
-            key_list.append(eachKey.string)
-
-        # check for dupes, if found, ignore the row and move to the next
-        if len(key_list)!=len(set(key_list)):
-            print 'dupe found' + str(get_id) + ' line: ' + str(i)
-        else:
-            print 'Line: ' + str(i) + ' Parsing book ID :' + str(get_id)
-            # parse value attributes
-            values = soup.products.attributegroups.find_all('value')
-            value_list = list([get_id])
-            for eachValue in values:
-                value_list.append(eachValue.string)
-
-            # Dump key/values into array
-            arr_val = np.array([value_list])
-
-            # build dataframe
-            if i == 1:
-                df = pd.DataFrame(arr_val, columns=key_list)
-            else:
-                df2 = pd.DataFrame(arr_val, columns=key_list)
-                df = concat([df, df2], ignore_index=True)
-
-    return df
-
-
-def get_pubdates(book_id_list):
-    summary = []
-    color = []
-    isbn = []
-
-    for eachIsbn in book_id_list:
-        try:
-            url = 'https://api.bol.com/catalog/v4/products/' + str(
-                eachIsbn[0]) + '/?apikey=AFF492148CFC4491B29E53C183B05BF2&format=xml'
-            html = urlopen(url).read()
-            soup = BeautifulSoup(html, 'lxml')
-
-            soup.productlist.products.summary.string
-            isbn.append(eachIsbn[0])
-            color.append(eachIsbn[1])
-            summary.append(soup.productlist.products.summary.string)
-        except:
-            e = sys.exc_info()[0]
-            print ( "Error: %s" % e )
-
-    result = zip(isbn, color, summary)
-    return result
-
-
-
-
-
 ## VROLIJK GAY BOOKS
 import pickle
-book_id_list = get_bol_book_list(BASE_URL, test=False)
-pickle.dump(book_id_list, open('book_id_list_bol_gay.pickle', "w"))
-
+#book_id_list = get_bol_book_list(BASE_URL, test=False)
+#pickle.dump(book_id_list, open('book_id_list_bol_gay.pickle', "w"))
+book_id_list = pickle.load(open('book_id_list_bol_gay.pickle'))
 
 book_details_bol_gay = get_bol_book_details(book_id_list, test=False)
-pickle.dump(book_details_bol_gay, open('book_details_bol_gay.pickle', "w"))
-
+book_details_bol_gay.to_csv('output_gay_ebooks_bol.csv')
 
 
 
