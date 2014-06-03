@@ -7,7 +7,7 @@ from pandas import concat
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 
-sys.setdefaultencoding("utf-8")
+#sys.setdefaultencoding("utf-8")
 #BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-thrillers-fantasy-thrillers/N/261+8293+5260+7373+16638/index.html'
 #BASE_URL = 'http://www.bol.com/nl/l/nederlandse-boeken/nederlandse-boeken-literatuur-nieuw/N/87+8293+14033/No/0/section/books/index.html'
 
